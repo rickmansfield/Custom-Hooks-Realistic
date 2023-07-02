@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 
 import Tasks from './components/Tasks/Tasks';
 import NewTask from './components/NewTask/NewTask';
@@ -9,15 +9,9 @@ function App() {
   // const [error, setError] = useState(null);
   const [tasks, setTasks] = useState([]);
   //The next fucntion transforms the data (an object) from the server into an array of objects in the format that we need.
-  const transformTasks = (taskObj) => {
-    const loadedTasks = [];
-    for (const taskKey in taskObj) {
-      loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
-    }
-    setTasks(loadedTasks);
-  };
 
-  const {isLoading, error, sendRequest: fetchTasks} = useHttp({url: 'https://tasks-91547-default-rtdb.firebaseio.com//tasks.json' }, transformTasks);
+
+  const {isLoading, error, sendRequest: fetchTasks} = useHttp();
 
   // const fetchTasks = async (taskText) => {
   //   setIsLoading(true);
@@ -47,8 +41,15 @@ function App() {
   // };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    const transformTasks = (taskObj) => {
+      const loadedTasks = [];
+      for (const taskKey in taskObj) {
+        loadedTasks.push({ id: taskKey, text: taskObj[taskKey].text });
+      }
+      setTasks(loadedTasks);
+    };
+    fetchTasks({url: 'https://tasks-91547-default-rtdb.firebaseio.com//tasks.json' }, transformTasks);
+  }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));
